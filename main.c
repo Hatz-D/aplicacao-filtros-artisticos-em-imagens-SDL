@@ -21,8 +21,7 @@ static void convertblackcover(void);
 static void convertwhitecover(void);
 static void cinzaEquacao(void);
 
-enum constants
-{
+enum constants {
   WINDOW_WIDTH = 640,
   WINDOW_HEIGHT = 480,
 };
@@ -34,19 +33,15 @@ static SDL_Texture *texture = NULL;
 static SDL_FRect textureRect = { .x = 0.0f, .y = 0.0f, .w = 0.0f, .h = 0.0f };
 static int placeholder = 0;
 
-static SDL_AppResult initialize(void)
-{
+static SDL_AppResult initialize(void) {
   SDL_Log("Iniciando SDL...\n");
-  if (!SDL_Init(SDL_INIT_VIDEO))
-  {
+  if (!SDL_Init(SDL_INIT_VIDEO)) {
     SDL_Log("*** Erro ao iniciar a SDL: %s\n", SDL_GetError());
     return SDL_APP_FAILURE;
   }
 
   SDL_Log("Criando janela e renderizador...\n");
-  if (!SDL_CreateWindowAndRenderer(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, 0,
-                                   &window, &renderer))
-  {
+  if (!SDL_CreateWindowAndRenderer(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer)) {
     SDL_Log("Erro ao criar a janela e/ou renderizador: %s\n", SDL_GetError());
     return SDL_APP_FAILURE;
   }
@@ -54,8 +49,7 @@ static SDL_AppResult initialize(void)
   return SDL_APP_CONTINUE;
 }
 
-static void shutdown(void)
-{
+static void shutdown(void) {
   SDL_Log("\nDestruindo textura...\n");
   SDL_DestroyTexture(texture);
   texture = NULL;
@@ -149,16 +143,14 @@ static void loop(void) {
 
 void loadRGBA32(const char *filename){
   surface = IMG_Load(filename);
-  if (!surface)
-  {
+  if (!surface) {
     SDL_Log("*** Erro ao carregar a imagem: %s\n", SDL_GetError());
     return;
   }
 
   SDL_Surface *converted = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
   SDL_DestroySurface(surface);
-  if (!converted)
-  {
+  if (!converted) {
     SDL_Log("*** Erro ao converter superfície para formato RGBA32: %s\n", SDL_GetError());
     surface = NULL;
     return;
@@ -167,8 +159,7 @@ void loadRGBA32(const char *filename){
   surface = converted;
 
   texture = SDL_CreateTextureFromSurface(renderer, surface);
-  if (!texture)
-  {
+  if (!texture) {
     SDL_Log("*** Erro ao criar textura: %s\n", SDL_GetError());
     return;
   }
@@ -197,16 +188,13 @@ void convertsepia(void){
   for (size_t i = 0; i < pixelCount; ++i) {
     SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
 
-    
     tr = (int)(0.393 * r + 0.769 * g + 0.189 * b);
     tg = (int)(0.349 * r + 0.686 * g + 0.168 * b);
     tb = (int)(0.272 * r + 0.534 * g + 0.131 * b);
-
   
     r = (tr > 255) ? 255 : tr;
     g = (tg > 255) ? 255 : tg;
     b = (tb > 255) ? 255 : tb;
-
 
     pixels[i] = SDL_MapRGBA(format,NULL, r, g, b ,a);
   }
@@ -217,10 +205,8 @@ void convertsepia(void){
   texture = SDL_CreateTextureFromSurface(renderer, surface);
 }
 
-void convertduotone(void)
-{
-  if (!surface)
-  {
+void convertduotone(void) {
+  if (!surface) {
     SDL_Log("*** Erro em convertduotone(): Imagem inválida!\n");
     return;
   }
@@ -233,8 +219,7 @@ void convertduotone(void)
   Uint32 *pixels = (Uint32 *)surface->pixels;
   Uint8 r = 0, g = 0, b = 0, a = 0, m = 0;
 
-  for (size_t i = 0; i < pixelCount; ++i)
-  {
+  for (size_t i = 0; i < pixelCount; ++i) {
     SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
 
     m = (r + g + b) / 3;
@@ -266,14 +251,12 @@ void applyOilPaintingEffect(void) {
     const size_t pixelCount = surface->w * surface->h;
     Uint32 *pixels = (Uint32 *)surface->pixels;
     Uint8 r, g, b, a;
-  
     
     for (int y = 1; y < surface->h - 1; y++) {
       for (int x = 1; x < surface->w - 1; x++) {
         int sumR = 0, sumG = 0, sumB = 0;
         int count = 0;
   
-        
         for (int j = -1; j <= 1; j++) {
           for (int i = -1; i <= 1; i++) {
             SDL_GetRGBA(pixels[(y + j) * surface->w + (x + i)], format, NULL, &r, &g, &b, &a);
@@ -287,7 +270,6 @@ void applyOilPaintingEffect(void) {
         r = sumR / count;
         g = sumG / count;
         b = sumB / count;
-  
         
         pixels[y * surface->w + x] = SDL_MapRGBA(format, NULL, r, g, b, a);
       }
@@ -322,7 +304,6 @@ void applyTintEffect(Uint8 tr, Uint8 tg, Uint8 tb, Uint8 ta){
     	r = (r * (255 - ta) + tr * ta) /255;
    	g = (g * (255 - ta) + tg * ta) / 255;
     	b = (b * (255 - ta) + tb * ta) / 255;
-
 	
     	pixels[i] = SDL_MapRGBA(format,NULL, r, g, b ,a);
   }
