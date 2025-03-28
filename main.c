@@ -148,7 +148,6 @@ static void loop(void) {
 
 
 void loadRGBA32(const char *filename){
-  // SDL_Log("Carregando imagem '%s'...\n", filename);
   surface = IMG_Load(filename);
   if (!surface)
   {
@@ -156,7 +155,6 @@ void loadRGBA32(const char *filename){
     return;
   }
 
-  // SDL_Log("Convertendo superfície para formato RGBA32...\n");
   SDL_Surface *converted = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_RGBA32);
   SDL_DestroySurface(surface);
   if (!converted)
@@ -168,7 +166,6 @@ void loadRGBA32(const char *filename){
 
   surface = converted;
 
-  // SDL_Log("Criando textura a partir da superfície...\n");
   texture = SDL_CreateTextureFromSurface(renderer, surface);
   if (!texture)
   {
@@ -322,12 +319,12 @@ void applyTintEffect(Uint8 tr, Uint8 tg, Uint8 tb, Uint8 ta){
   for (size_t i = 0; i< pixelCount; i++){
 	SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
 	
-    r = (r * (255 - ta) + tr * ta) /255;
-    g = (g * (255 - ta) + tg * ta) / 255;
-    b = (b * (255 - ta) + tb * ta) / 255;
+    	r = (r * (255 - ta) + tr * ta) /255;
+   	g = (g * (255 - ta) + tg * ta) / 255;
+    	b = (b * (255 - ta) + tb * ta) / 255;
 
 	
-    pixels[i] = SDL_MapRGBA(format,NULL, r, g, b ,a);
+    	pixels[i] = SDL_MapRGBA(format,NULL, r, g, b ,a);
   }
 
   SDL_UnlockSurface(surface);
@@ -395,9 +392,9 @@ void convertwhitecover(void){
   for (size_t i = 0; i< pixelCount; ++i){
     SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
 	
-	tr = r + (0.25 * (255-r));
-	tg = g + (0.25 * (255-g));
-	tb = b + (0.25 * (255-b));
+    tr = r + (0.25 * (255-r));
+    tg = g + (0.25 * (255-g));
+    tb = b + (0.25 * (255-b));
 
     r = (tr > 255) ? 255 : tr;
     g = (tg > 255) ? 255 : tg;
@@ -431,7 +428,7 @@ void cinzaEquacao(void) {
     Uint8 m = 0;
 
     for (size_t i = 0; i < pixelCount; ++i) {
-        SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
+	SDL_GetRGBA(pixels[i], format, NULL, &r, &g, &b, &a);
         
         m = r * 0.2126 + g * 0.7152 + b * 0.0722;
         
@@ -452,8 +449,7 @@ int main(int argc, char *argv[]){
 
   loadRGBA32(IMAGE_FILENAME);
 
-  if (textureRect.w > WINDOW_WIDTH || textureRect.h > WINDOW_HEIGHT)
-  {
+  if (textureRect.w > WINDOW_WIDTH || textureRect.h > WINDOW_HEIGHT) {
     SDL_SetWindowSize(window, (int)textureRect.w, (int)textureRect.h);
     SDL_SyncWindow(window);
   }
